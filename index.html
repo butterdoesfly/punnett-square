@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html>
+	
+	<head>		
+
+		<title>Punnett Square Calculator</title>
+
+		<style>
+			* {
+				text-align: center;
+			}
+			table { 
+					table-layout: auto;
+					width:50vw;
+					max-width: 50vw;
+					height:25vw;
+					max-height: 25vw;
+					text-align: center;
+					padding:10px;
+					transform:translateX(50%);
+					border-width:1px;
+					border-color:black;
+					border-style:solid;
+			}
+
+			td { 
+				white-space: nowrap
+			}
+
+			input {
+				width:50%;
+				border-style: solid;
+				border-width: 1px;
+				border-color:black;
+			}
+
+			#GridNumber {
+				width:50%;
+			}
+
+			#numberSpanValue {
+
+				font-weight:normal;
+				
+			}
+		</style>
+		
+	</head>
+	
+	<body>
+	
+		<h1>Punnett Square Program</h1>
+		
+		<hr>
+		
+		<h3>How many rows/collumns do you want?: <span width="50%" id="numberSpanValue">5</span></h3>
+		<!-- <input type="number" id="GridNumber"><input type="button" id="Submit" value="Submit" onclick="Submit()"> -->
+		<input type="range" id="GridNumber" min="1" max="8" value="1" onchange="Submit();Calculate();">
+		
+		
+		<br>
+		<br>
+		
+		<table id="PunnettSquareTable"></table>
+		<script>
+			//Add slider instead of submit button, automatically fill parent traits with a,bc, etc.
+			var PunnettSquareTable = document.getElementById("PunnettSquareTable");			
+			
+			function Submit() {
+				// Check if the value of the input box has changed
+				var GridNumber = document.getElementById("GridNumber").value;
+				var numberSpanValue = document.getElementById("numberSpanValue");
+				numberSpanValue.innerHTML = GridNumber
+				PunnettSquareTable.innerHTML = "";
+				for (i = 0; i<=GridNumber; i++) {
+					const TableRow = document.createElement("tr");
+					for (j=0; j<=GridNumber; j++) {
+						const TableDataCell = document.createElement("td");
+						if (i > 0 && j > 0) {
+							node = document.createTextNode("Empty");
+						} else if (i==0 && j==0) {
+							node = document.createTextNode("P1/P2");
+						} else if (i==0 || j==0) {
+							node = document.createElement("input");
+							node.onkeyup = function() {Allele();}
+						}
+						TableDataCell.appendChild(node)
+						TableRow.appendChild(TableDataCell)
+					}
+					PunnettSquareTable.appendChild(TableRow);
+				}
+			}
+
+			function Allele() {
+
+				var GridNumber = document.getElementById("GridNumber");
+
+				var allHaveValues = true
+				
+				for (var i = 0, row; row = PunnettSquareTable.rows[i]; i++) {	
+					 for (var j = 0, col; col = row.cells[j]; j++) {
+						 
+						 if (col.innerHTML == "<input>") {
+
+								if (col.children[0].value == "") {
+
+									allHaveValues = false;
+									
+								}
+								
+							}
+					 }  
+				}
+
+				if (allHaveValues) {
+
+					Calculate();
+					
+				}
+				
+			}
+
+			function Calculate() {
+
+				for (var i = 0, row; row = PunnettSquareTable.rows[i]; i++) {
+					for (var j = 0, col; col = row.cells[j]; j++) {
+						if (col.innerHTML != "<input>" && col.innerHTML != "") {
+							var firstAlleles = PunnettSquareTable.rows[0].cells[j].children[0].value;
+							var secondAlleles = PunnettSquareTable.rows[i].cells[0].children[0].value;
+
+							var unsortedString = firstAlleles + secondAlleles
+
+							var unsortedList = unsortedString.split('')
+							
+							unsortedList.sort()
+
+							var sortedString = ""
+
+							for (x = 0; x < unsortedList.length; x++) {
+								sortedString += unsortedList[x];
+							}
+							
+							col.innerHTML = sortedString;
+
+						}
+					}
+				}
+				
+			}
+			
+		</script>
+	
+	</body>
+	
+</html>
